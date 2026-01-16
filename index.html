@@ -3,45 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOICE MASTER Pro</title>
+    <title>Голосовая игра: Учи слова!</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container" id="start-screen">
         <div class="start-content">
-            <div class="logo-anim"><i class="fas fa-language"></i></div>
-            <h1>VOICE MASTER</h1>
-            <p class="subtitle">Произнеси перевод слова вслух!</p>
-            <button class="btn-start" id="start-btn">ПОЕХАЛИ!</button>
+            <h1><i class="fas fa-language"></i> VOICE MASTER</h1>
+            <p class="subtitle">Говори и запоминай! Произнеси перевод слова вслух</p>
+            <button class="btn-start" id="start-btn">
+                <i class="fas fa-play"></i> НАЧАТЬ ИГРУ
+            </button>
+            <div class="instructions">
+                <p><i class="fas fa-microphone"></i> Нажми кнопку "ГОВОРИТЬ" и скажи перевод</p>
+                <p><i class="fas fa-trophy"></i> 3 правильных ответа подряд = бонус!</p>
+            </div>
         </div>
     </div>
 
     <div class="container game-screen hidden" id="game-screen">
         <div class="header">
-            <div class="score-badge"><i class="fas fa-star"></i> <span id="score">0</span></div>
-            <div class="streak-badge"><i class="fas fa-fire"></i> <span id="streak">0</span></div>
+            <div class="score"><i class="fas fa-star"></i> Счёт: <span id="score">0</span></div>
+            <div class="streak"><i class="fas fa-fire"></i> Серия: <span id="streak">0</span></div>
         </div>
 
-        <div class="word-card" id="word-card">
-            <div class="word-label">КАК БУДЕТ НА РУССКОМ?</div>
+        <div class="word-container" id="word-card">
+            <div class="word-label">СЛОВО НА АНГЛИЙСКОМ</div>
             <div class="word" id="current-word">APPLE</div>
             <div class="transcription" id="transcription">[ˈæp.əl]</div>
-            
-            <!-- Скрытый индикатор ответа внутри карточки -->
-            <div id="answer-feedback" class="feedback-overlay"></div>
         </div>
 
         <div class="voice-section">
-            <div class="voice-indicator-wrapper">
-                <div class="pulse-ring"></div>
-                <div class="voice-indicator" id="voice-indicator">
-                    <i class="fas fa-microphone"></i>
-                </div>
+            <div class="voice-indicator" id="voice-indicator">
+                <div class="pulse"></div>
+                <i class="fas fa-microphone"></i>
             </div>
-            <button class="btn-speak" id="speak-btn">ГОВОРИТЬ</button>
-            <p class="hint" id="hint">Нажми и назови перевод</p>
+            <button class="btn-speak" id="speak-btn">
+                <i class="fas fa-microphone-alt"></i> ГОВОРИТЬ
+            </button>
+            <p class="hint" id="hint">Нажми кнопку и произнеси перевод</p>
+        </div>
+
+        <div class="result hidden" id="result">
+            <div class="result-icon"><i id="result-icon"></i></div>
+            <div class="result-text" id="result-text"></div>
+            <div class="correct-answer" id="correct-answer"></div>
         </div>
 
         <div class="controls">
