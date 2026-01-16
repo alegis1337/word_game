@@ -55,21 +55,127 @@ const wrongSound = document.getElementById('wrong-sound');
 const winSound = document.getElementById('win-sound');
 
 // ====================
-// 3. НАСТРАИВАЕМ РАСПОЗНАВАНИЕ РЕЧИ
+// 3. НАСТРОЙКА РАСПОЗНАВАНИЯ РЕЧИ ДЛЯ iOS
 // ====================
 
-// Проверяем, поддерживает ли браузер распознавание речи
-if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert("Извините, ваш браузер не поддерживает распознавание речи. Попробуйте Chrome или Edge.");
-} else {
-    // Создаём объект для распознавания речи
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
+let recognition;
+let isRecording = false;
+let recognitionTimeout;
+
+// Инициализируем распознавание
+function initSpeechRecognition() {
+    if (!('webkitSpeechRecognition' in window)) {
+        console.log("Распознавание речи не поддерживается");
+        if (hintElement) {
+            hintElement.textContent = "Используйте Chrome на Android или Safari на Mac";
+        }
+        return false;
+    }
     
-    // Настройки
-    recognition.lang = 'ru-RU'; // Распознаём русскую речь
-    recognition.interimResults = false; // Только конечный результат
-    recognition.maxAlternatives = 1; // Только одна альтернатива
+    const SpeechRecognition = window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    
+    // НАСТРОЙКИ ДЛЯ iOS:
+    recognition.continuous = false; // Важно: false для iOS
+    recognition.interimResults = false;
+    recognition.lang = 'ru-RU';
+    recognition.maxAlternatives = 1;
+    
+    // События
+    recognition.onstart = function() {
+        console.log("Микрофон включен");
+        isRecording = true;
+        if (voiceIndicator) voiceIndicator.classList.add('active');
+        if (hintElement) hintElement.textContent = "Говорите сейчас...";
+        
+        // Таймаут для iOS (на случай зависания)
+        clearTimeout(recognitionTimeout);
+        recognitionTimeout = setTimeout(() => {
+            if (isRecording) {
+                console.log("Таймаут распознавания");
+                recognition.stop();
+            }
+        }, 5000); // 5 секунд максимум
+    };
+    
+    recognition.onresult = function(event) {
+        if (event.results[0].isFinal) {
+            const spokenText = event.results[0][0].transcript.toLowerCase();
+            console.log("Вы сказали:", spokenText);
+            checkAnswer(spokenText);
+        }
+    };
+    
+    recognition.onerror = function(event) {
+        console.log("Ошибка распознавания:", event.error);
+        isRecording = false;
+        if (voiceIndicator) voiceIndicator.classList.remove('active');
+        if (hintElement) hintElement.textContent = "Ошибка. Попробуйте ещё раз";
+        
+        // Автоматический перезапуск при некоторых ошибках
+        if (event.error === 'no-speech' || event.error === 'audio-capture') {
+            setTimeout(() => {
+                if (!isRecording) {
+                    hintElement.textContent = "Скажите громче...";
+                }
+            }, 1000);
+        }
+    };
+    
+    recognition.onend = function() {
+        console.log("Микрофон выключен (onend)");
+        isRecording = false;
+        clearTimeout(recognitionTimeout);
+        
+        if (voiceIndicator) voiceIndicator.classList.remove('active');
+        
+        // НЕ меняем текст сразу - он изменится после проверки ответа
+    };
+    
+    return true;
+}
+
+// Функция запуска распознавания
+function startRecognition() {
+    if (isRecording) {
+        console.log("Уже записывается");
+        return;
+    }
+    
+    if (!recognition) {
+        if (!initSpeechRecognition()) {
+            alert("Распознавание речи не поддерживается в этом браузере");
+            return;
+        }
+    }
+    
+    try {
+        recognition.start();
+        console.log("Запуск распознавания...");
+    } catch (e) {
+        console.log("Ошибка при старте:", e);
+        
+        // Попытка переинициализации
+        if (e.message && e.message.includes('already started')) {
+            setTimeout(() => {
+                recognition.stop();
+                setTimeout(() => {
+                    recognition.start();
+                }, 300);
+            }, 100);
+        }
+    }
+}
+
+// ====================
+// 4. ОБНОВЛЁННАЯ КНОПКА "ГОВОРИТЬ"
+// ====================
+
+if (speakButton) {
+    speakButton.addEventListener('click', function() {
+        startRecognition();
+    });
+}
     
     // ====================
     // 4. ОБРАБОТЧИКИ СОБЫТИЙ ДЛЯ РАСПОЗНАВАНИЯ
@@ -335,4 +441,5 @@ restartButton.addEventListener('click', function() {
 window.addEventListener('load', function() {
     showCurrentWord();
     console.log("Игра загружена! Используйте браузер Chrome для лучшего распознавания речи.");
+
 });
