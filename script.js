@@ -1,9 +1,3 @@
-let currentWordIndex = 0;
-let score = 0;
-let streak = 0;
-let isRecording = false;
-let recognition = null;
-
 const words = [
     { english: "APPLE", russian: "яблоко", transcription: "[ˈæp.əl]" },
     { english: "HOUSE", russian: "дом", transcription: "[haʊs]" },
@@ -12,9 +6,14 @@ const words = [
     { english: "DOG", russian: "собака", transcription: "[дɒɡ]" }
 ];
 
+let currentWordIndex = 0;
+let score = 0;
+let streak = 0;
+let isRecording = false;
+let recognition = null;
+
 const wordCard = document.getElementById('word-card');
 const currentWordElement = document.getElementById('current-word');
-const transcriptionElement = document.getElementById('transcription');
 const scoreElement = document.getElementById('score');
 const streakElement = document.getElementById('streak');
 const voiceIndicator = document.getElementById('voice-indicator');
@@ -24,7 +23,7 @@ function startVoiceRecording() {
     if (isRecording) return;
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return alert("Браузер не поддерживает голос");
+    if (!SpeechRecognition) return alert("Микрофон не поддерживается");
 
     recognition = new SpeechRecognition();
     recognition.lang = 'ru-RU';
@@ -33,7 +32,7 @@ function startVoiceRecording() {
     recognition.onstart = () => {
         isRecording = true;
         voiceIndicator.classList.add('active');
-        hintElement.textContent = "СЛУШАЮ...";
+        hintElement.textContent = "Слушаю...";
     };
 
     recognition.onresult = (event) => {
@@ -45,7 +44,7 @@ function startVoiceRecording() {
         isRecording = false;
         voiceIndicator.classList.remove('active');
         hintElement.textContent = "Нажми и говори";
-        recognition = null; // Очистка для iOS
+        recognition = null; // Сброс для iPhone
     };
 
     recognition.start();
@@ -55,24 +54,17 @@ function checkAnswer(spokenText) {
     const correct = words[currentWordIndex].russian.toLowerCase();
     
     if (spokenText.includes(correct) || correct.includes(spokenText)) {
-        // УСПЕХ
         score += 10;
         streak++;
         wordCard.classList.add('correct-anim');
-        document.getElementById('correct-sound').play();
-        
-        if (streak % 3 === 0) {
-            showConfetti();
-            document.getElementById('win-sound').play();
-        }
+        document.getElementById('correct-sound').play().catch(e=>{});
+        if (streak % 3 === 0) showConfetti();
     } else {
-        // ОШИБКА
         streak = 0;
         wordCard.classList.add('wrong-anim');
-        document.getElementById('wrong-sound').play();
+        document.getElementById('wrong-sound').play().catch(e=>{});
     }
 
-    // Обновляем UI и готовим следующее слово
     scoreElement.textContent = score;
     streakElement.textContent = streak;
 
@@ -85,12 +77,13 @@ function checkAnswer(spokenText) {
 function nextWord() {
     currentWordIndex = (currentWordIndex + 1) % words.length;
     currentWordElement.textContent = words[currentWordIndex].english;
-    transcriptionElement.textContent = words[currentWordIndex].transcription;
+    document.getElementById('transcription').textContent = words[currentWordIndex].transcription;
 }
 
-// Кнопки
+// Слушатели событий
 document.getElementById('speak-btn').addEventListener('click', startVoiceRecording);
 document.getElementById('start-btn').addEventListener('click', () => {
     document.getElementById('start-screen').classList.add('hidden');
     document.getElementById('game-screen').classList.remove('hidden');
 });
+document.getElementById('skip-btn').addEventListener('click', nextWord);
