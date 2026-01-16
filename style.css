@@ -1,61 +1,176 @@
-ss /* ... Твой базовый CSS ... */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+ss /* 1. БАЗОВЫЕ СБРОСЫ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    min-height: 100vh; display: flex; justify-content: center; align-items: center;
-    overflow: hidden; color: white;
+    min-height: 100vh;
+    /* Центрирование всего содержимого */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    overflow-x: hidden;
 }
-.container { width: 100%; max-width: 800px; padding: 20px; text-align: center; }
-.hidden { display: none !important; }
 
-/* Экран старта */
+/* 2. ГЛАВНЫЙ КОНТЕЙНЕР */
+.container {
+    width: 100%;
+    max-width: 450px; /* Ограничиваем ширину, чтобы на ПК не было слишком широко */
+    padding: 20px;
+    margin: 0 auto; /* Центрирование */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 3. ЭКРАН СТАРТА */
 .start-content {
-    background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
-    border-radius: 30px; padding: 50px 30px; border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 40px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
 }
-h1 { font-family: 'Poppins', sans-serif; font-weight: 900; font-size: 3.5rem; margin-bottom: 10px; }
 
-/* Карточка слова */
-.word-container {
-    margin: 40px 0; padding: 30px; background: rgba(0, 0, 0, 0.2);
-    border-radius: 20px; border: 3px solid rgba(255, 255, 255, 0.3);
-    transition: all 0.4s ease;
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 900;
+    font-size: 2.5rem; /* Уменьшил для мобильных */
+    margin-bottom: 15px;
+    line-height: 1.2;
 }
-.word { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 5rem; }
+
+.subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+/* 4. КАРТОЧКА СЛОВА */
+.word-container {
+    margin: 20px 0;
+    padding: 30px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.4s ease;
+    width: 100%;
+}
+
+.word {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 3.5rem; /* Оптимально для iPhone */
+    word-wrap: break-word;
+}
+
+.word-label {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+/* 5. КНОПКИ */
+.btn-start, .btn-speak {
+    background: linear-gradient(45deg, #FF416C, #FF4B2B);
+    color: white;
+    border: none;
+    padding: 18px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    width: 100%; /* На мобильных кнопка на всю ширину */
+    max-width: 280px;
+    margin: 15px auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.btn-speak {
+    background: linear-gradient(45deg, #2193b0, #6dd5ed);
+}
+
+/* 6. ИНДИКАТОР */
+.voice-indicator {
+    width: 80px;
+    height: 80px;
+    background: #2193b0;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-size: 2rem;
+}
+
+.voice-indicator.active {
+    background: #FF416C;
+}
+
+/* 7. ВЕРХНЯЯ ПАНЕЛЬ (СЧЕТ) */
+.header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.score, .streak {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    flex: 1; /* Одинаковая ширина */
+}
+
+/* 8. УПРАВЛЕНИЕ (НИЗ) */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-control {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    flex: 1;
+}
 
 /* АНИМАЦИИ ОТВЕТОВ */
-.correct-anim { background: rgba(76, 175, 80, 0.4) !important; transform: scale(1.05); border-color: #4CAF50 !important; }
-.wrong-anim { animation: shake 0.5s ease; background: rgba(255, 65, 108, 0.4) !important; border-color: #FF416C !important; }
+.correct-anim { background: rgba(76, 175, 80, 0.5) !important; transform: scale(1.03); }
+.wrong-anim { animation: shake 0.5s ease; background: rgba(255, 65, 108, 0.5) !important; }
 
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-15px); }
-    75% { transform: translateX(15px); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
 }
 
-/* Кнопки и индикатор */
-.btn-start, .btn-speak {
-    background: linear-gradient(45deg, #FF416C, #FF4B2B);
-    color: white; border: none; padding: 20px 50px; font-size: 1.5rem;
-    font-weight: bold; border-radius: 50px; cursor: pointer; margin: 20px 0;
+/* ИНСТРУКЦИИ */
+.instructions {
+    text-align: left;
+    font-size: 0.9rem;
+    margin-top: 20px;
+    background: rgba(0,0,0,0.1);
+    padding: 15px;
+    border-radius: 15px;
 }
-.btn-speak { background: linear-gradient(45deg, #2193b0, #6dd5ed); }
-
-.voice-indicator {
-    width: 100px; height: 100px; background: #2193b0; border-radius: 50%;
-    margin: 0 auto 20px; display: flex; justify-content: center; align-items: center;
-    position: relative; font-size: 2.5rem;
-}
-.voice-indicator.active { background: #FF416C; animation: pulse 1s infinite; }
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(255, 65, 108, 0.7); }
-    70% { box-shadow: 0 0 0 20px rgba(255, 65, 108, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 65, 108, 0); }
-}
-
-.header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-.score, .streak { background: rgba(255, 255, 255, 0.15); padding: 10px 20px; border-radius: 20px; }
-.controls { display: flex; justify-content: center; gap: 15px; }
-.btn-control { background: rgba(255,255,255,0.1); border: 1px solid white; color: white; padding: 15px; border-radius: 10px; }
