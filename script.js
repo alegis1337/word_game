@@ -72,70 +72,79 @@ function showCurrentWord() {
 }
 
 // ====================
-// 5. РАСПОЗНАВАНИЕ РЕЧИ
+// 5. РАСПОЗНАВАНИЕ РЕЧИ (ИСПРАВЛЕНО ДЛЯ IOS)
 // ====================
 
-// Инициализация
 function initRecognition() {
-    if (!('webkitSpeechRecognition' in window)) {
-        return false;
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    if (!SpeechRecognition) {
+        return null;
     }
     
-    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-    recognition = new SpeechRecognition();
+    const rec = new SpeechRecognition();
+    rec.lang = 'ru-RU';
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    // Важно для iOS: continuous должен быть false, чтобы сессия закрывалась сама
+    rec.continuous = false; 
     
-    recognition.lang = 'ru-RU';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    
-    recognition.onstart = function() {
+    rec.onstart = function() {
         console.log("Запись началась");
         isRecording = true;
         if (voiceIndicator) voiceIndicator.classList.add('active');
         if (hintElement) hintElement.textContent = "Говорите сейчас...";
     };
     
-    recognition.onresult = function(event) {
+    rec.onresult = function(event) {
         const spokenText = event.results[0][0].transcript.toLowerCase();
         console.log("Распознано:", spokenText);
+        
+        // Сразу останавливаем после получения результата
+        rec.stop(); 
         checkAnswer(spokenText);
     };
     
-    recognition.onerror = function(event) {
-        console.log("Ошибка распознавания");
+    rec.onerror = function(event) {
+        console.log("Ошибка распознавания:", event.error);
         isRecording = false;
         if (voiceIndicator) voiceIndicator.classList.remove('active');
+        // Если ошибка "not-allowed", значит нет прав на микрофон
+        if (event.error === 'not-allowed') alert("Разрешите доступ к микрофону в настройках Safari");
     };
     
-    recognition.onend = function() {
+    rec.onend = function() {
         console.log("Запись завершена");
         isRecording = false;
         if (voiceIndicator) voiceIndicator.classList.remove('active');
+        // Уничтожаем объект после использования, чтобы создать чистый в следующий раз
+        recognition = null; 
     };
     
-    return true;
+    return rec;
 }
 
 // Запуск записи
 function startVoiceRecording() {
+    // Если уже идет запись — останавливаем её (повторное нажатие как стоп)
     if (isRecording) {
+        if (recognition) recognition.stop();
         return;
     }
     
+    // На iOS лучше создавать новый объект при каждом нажатии кнопки
+    recognition = initRecognition();
+    
     if (!recognition) {
-        if (!initRecognition()) {
-            alert("Используйте Safari на iOS");
-            return;
-        }
+        alert("Ваш браузер не поддерживает распознавание речи. Пожалуйста, используйте Safari на iPhone.");
+        return;
     }
     
     try {
         recognition.start();
     } catch (error) {
         console.log("Ошибка при старте:", error);
-        setTimeout(() => {
-            recognition.start();
-        }, 300);
+        // Если объект еще "занят", пробуем сбросить его
+        recognition = null;
     }
 }
 
@@ -294,3 +303,4 @@ window.addEventListener('load', function() {
     showCurrentWord();
     console.log("Игра готова к работе!");
 });
+
