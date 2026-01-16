@@ -212,11 +212,13 @@ h1 {
 
 /* 10. РЕЗУЛЬТАТ */
 .result {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.8);
     border-radius: 20px;
     padding: 20px;
     margin: 20px 0;
     animation: fadeIn 0.3s ease;
+    position: relative;
+    z-index: 100;
 }
 
 @keyframes fadeIn {
@@ -246,7 +248,7 @@ h1 {
 .correct-answer {
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.9);
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     padding: 10px;
     border-radius: 10px;
     margin-top: 10px;
@@ -271,6 +273,14 @@ h1 {
     font-size: 1rem;
     cursor: pointer;
     transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+}
+
+.btn-control i {
+    font-size: 1.2rem;
 }
 
 .btn-control:active {
@@ -288,7 +298,32 @@ h1 {
     z-index: 1000;
 }
 
-/* 13. АДАПТИВНОСТЬ */
+/* 13. АНИМАЦИИ ОТВЕТОВ */
+.correct-anim {
+    animation: correctPulse 0.8s ease;
+    background: rgba(76, 175, 80, 0.15) !important;
+    border-color: rgba(76, 175, 80, 0.4) !important;
+}
+
+@keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+.wrong-anim {
+    animation: shake 0.5s ease;
+    background: rgba(255, 65, 108, 0.15) !important;
+    border-color: rgba(255, 65, 108, 0.4) !important;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+
+/* 14. АДАПТИВНОСТЬ */
 @media (max-width: 480px) {
     body {
         padding: 15px;
@@ -328,7 +363,6 @@ h1 {
     }
 }
 
-/* Для очень маленьких экранов */
 @media (max-height: 700px) {
     .word {
         font-size: 2.2rem;
