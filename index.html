@@ -3,50 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Voice Master</title>
+    <title>VOICE MASTER Pro</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Экран старта -->
     <div class="container" id="start-screen">
         <div class="start-content">
+            <div class="logo-anim"><i class="fas fa-language"></i></div>
             <h1>VOICE MASTER</h1>
-            <button class="btn-start" id="start-btn">ИГРАТЬ</button>
+            <p class="subtitle">Произнеси перевод слова вслух!</p>
+            <button class="btn-start" id="start-btn">ПОЕХАЛИ!</button>
         </div>
     </div>
 
-    <!-- Игровой экран -->
     <div class="container game-screen hidden" id="game-screen">
         <div class="header">
-            <div class="score"><i class="fas fa-star"></i> <span id="score">0</span></div>
-            <div class="streak"><i class="fas fa-fire"></i> <span id="streak">0</span></div>
+            <div class="score-badge"><i class="fas fa-star"></i> <span id="score">0</span></div>
+            <div class="streak-badge"><i class="fas fa-fire"></i> <span id="streak">0</span></div>
         </div>
 
-        <div class="word-container" id="word-card">
-            <div class="word-label">Translate this:</div>
+        <div class="word-card" id="word-card">
+            <div class="word-label">КАК БУДЕТ НА РУССКОМ?</div>
             <div class="word" id="current-word">APPLE</div>
             <div class="transcription" id="transcription">[ˈæp.əl]</div>
+            
+            <!-- Скрытый индикатор ответа внутри карточки -->
+            <div id="answer-feedback" class="feedback-overlay"></div>
         </div>
 
         <div class="voice-section">
-            <button class="btn-speak" id="speak-btn">
-                <i class="fas fa-microphone"></i>
-            </button>
-            <p class="hint" id="hint">Нажми и говори</p>
-            <!-- Индикатор активности вынесем отдельно для анимации -->
-            <div id="voice-indicator" class="voice-indicator"></div>
-        </div>
-
-        <!-- Блок результата (скрыт, но нужен для JS) -->
-        <div id="result" class="hidden">
-            <div id="result-text"></div>
-            <div id="correct-answer"></div>
+            <div class="voice-indicator-wrapper">
+                <div class="pulse-ring"></div>
+                <div class="voice-indicator" id="voice-indicator">
+                    <i class="fas fa-microphone"></i>
+                </div>
+            </div>
+            <button class="btn-speak" id="speak-btn">ГОВОРИТЬ</button>
+            <p class="hint" id="hint">Нажми и назови перевод</p>
         </div>
 
         <div class="controls">
             <button class="btn-control" id="skip-btn"><i class="fas fa-forward"></i></button>
+            <button class="btn-control" id="hint-btn"><i class="fas fa-lightbulb"></i></button>
             <button class="btn-control" id="restart-btn"><i class="fas fa-redo"></i></button>
         </div>
     </div>
